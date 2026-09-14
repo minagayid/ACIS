@@ -1,0 +1,160 @@
+{
+  "dataset_status": "synthetic_fixture",
+  "metrics": {
+    "validation": {
+      "count": 4,
+      "labels": [
+        "alert_context",
+        "food_context",
+        "play_context",
+        "separation_context"
+      ],
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "balanced_accuracy": 1.0,
+      "brier_score": 0.049808,
+      "abstention_rate": 0.0,
+      "selective_accuracy": 1.0,
+      "majority_accuracy": 0.25,
+      "per_animal": {
+        "dog_003": {
+          "accuracy": 1.0,
+          "count": 4.0
+        }
+      },
+      "excluded": {
+        "unknown": 0,
+        "multi_label": 0,
+        "missing_acoustic_features": 0
+      }
+    },
+    "test": {
+      "count": 4,
+      "labels": [
+        "alert_context",
+        "food_context",
+        "play_context",
+        "separation_context"
+      ],
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "balanced_accuracy": 1.0,
+      "brier_score": 0.035794,
+      "abstention_rate": 0.0,
+      "selective_accuracy": 1.0,
+      "majority_accuracy": 0.25,
+      "per_animal": {
+        "dog_004": {
+          "accuracy": 1.0,
+          "count": 4.0
+        }
+      },
+      "excluded": {
+        "unknown": 0,
+        "multi_label": 0,
+        "missing_acoustic_features": 0
+      }
+    }
+  },
+  "split": {
+    "train_animals": [
+      "dog_001",
+      "dog_002"
+    ],
+    "validation_animals": [
+      "dog_003"
+    ],
+    "test_animals": [
+      "dog_004"
+    ],
+    "train_segments": [
+      "seg_0001",
+      "seg_0002",
+      "seg_0003",
+      "seg_0004",
+      "seg_0005",
+      "seg_0006",
+      "seg_0007",
+      "seg_0008"
+    ],
+    "validation_segments": [
+      "seg_0009",
+      "seg_0010",
+      "seg_0011",
+      "seg_0012"
+    ],
+    "test_segments": [
+      "seg_0013",
+      "seg_0014",
+      "seg_0015",
+      "seg_0016"
+    ]
+  },
+  "model": {
+    "artifact_schema_version": "1.0",
+    "model_name": "standardized-nearest-centroid",
+    "model_version": "0.1.0",
+    "feature_pipeline_version": "acoustic-summary-v1",
+    "abstention_threshold": 0.55,
+    "temperature": 1.0,
+    "feature_names": [
+      "duration_ms",
+      "peak_frequency_hz",
+      "spectral_centroid_hz",
+      "energy_db",
+      "repetition_count",
+      "voiced_fraction"
+    ],
+    "means": [
+      520.0,
+      673.75,
+      1105.0,
+      -12.5,
+      3.5,
+      0.825
+    ],
+    "stds": [
+      179.65244223221683,
+      164.15979258027832,
+      179.37391114652098,
+      3.427827300200522,
+      1.118033988749895,
+      0.07466592261534041
+    ],
+    "centroids": {
+      "alert_context": [
+        -0.667956407989652,
+        0.25127955726325435,
+        0.02787473366690302,
+        0.5834599659915782,
+        -1.3416407864998738,
+        -0.20089485905472687
+      ],
+      "separation_context": [
+        1.6420595029745608,
+        -1.3020849785459543,
+        -1.0871146130092177,
+        -1.4586499149789458,
+        0.4472135954999579,
+        0.8705443892371532
+      ],
+      "food_context": [
+        -0.05566303399913766,
+        -0.38834113395230213,
+        -0.5296199396711575,
+        -0.2917299829957891,
+        -0.4472135954999579,
+        0.8705443892371532
+      ],
+      "play_context": [
+        -0.9184400609857715,
+        1.439146555235002,
+        1.5888598190134724,
+        1.1669199319831565,
+        1.3416407864998738,
+        -1.540193919419577
+      ]
+    },
+    "metadata": {}
+  }
+}
