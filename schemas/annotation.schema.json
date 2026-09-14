@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acis-context-lab.example/schemas/annotation.schema.json",
+  "title": "ACIS observable annotation segment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["segment_id", "recording_id", "start_ms", "end_ms", "vocalization_type", "context_labels", "observed_behavior", "annotator_id", "annotation_confidence"],
+  "properties": {
+    "segment_id": {"type": "string", "minLength": 1},
+    "recording_id": {"type": "string", "minLength": 1},
+    "start_ms": {"type": "integer", "minimum": 0},
+    "end_ms": {"type": "integer", "minimum": 1},
+    "vocalization_type": {"type": "string", "minLength": 1},
+    "context_labels": {"type": "array", "minItems": 1, "items": {"enum": ["play_context", "separation_context", "alert_context", "food_context", "resting_context", "unknown"]}},
+    "observed_behavior": {"type": "array", "items": {"type": "string"}},
+    "annotator_id": {"type": "string", "minLength": 1},
+    "annotation_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "acoustic_features": {"type": "object", "additionalProperties": {"type": "number"}},
+    "recorded_trigger": {"type": ["string", "null"]},
+    "receiver_id": {"type": ["string", "null"]},
+    "response_observed": {"type": "array", "items": {"type": "string"}},
+    "response_latency_ms": {"type": ["integer", "null"], "minimum": 0},
+    "quality_flags": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": ["string", "null"]}
+  }
+}
