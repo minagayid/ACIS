@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "species": "canis_lupus_familiaris",
+  "model": "standardized-nearest-centroid",
+  "features": [
+    "duration_ms",
+    "peak_frequency_hz",
+    "spectral_centroid_hz",
+    "energy_db",
+    "repetition_count",
+    "voiced_fraction"
+  ],
+  "labels": [
+    "play_context",
+    "separation_context",
+    "alert_context",
+    "food_context",
+    "resting_context",
+    "unknown"
+  ],
+  "abstention_threshold": 0.55,
+  "claim_scope": "context-associated hypothesis; not a translation or intent claim"
+}
