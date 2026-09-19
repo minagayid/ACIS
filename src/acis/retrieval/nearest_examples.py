@@ -22,6 +22,7 @@ def retrieve_neighbors(
     exclude_animal_id: str | None = None,
     exclude_recording_id: str | None = None,
     exclude_session_id: str | None = None,
+    species: str | None = None,
     means: tuple[float, ...] = (),
     stds: tuple[float, ...] = (),
 ) -> list[RetrievedExample]:
@@ -31,6 +32,8 @@ def retrieve_neighbors(
     ranked: list[tuple[float, TrainingExample]] = []
     for example in examples:
         if (
+            (species and example.species != species)
+            or
             (exclude_animal_id and example.animal_id == exclude_animal_id)
             or (exclude_recording_id and example.recording.recording_id == exclude_recording_id)
             or (exclude_session_id and example.session_id == exclude_session_id)

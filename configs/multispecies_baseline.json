@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.1",
+  "species": "multi_species",
+  "species_scope": [
+    "canis_lupus_familiaris",
+    "taeniopygia_guttata",
+    "myotis_lucifugus",
+    "tursiops_truncatus"
+  ],
+  "model": "species-routed-standardized-nearest-centroid",
+  "features": [
+    "duration_ms",
+    "peak_frequency_hz",
+    "spectral_centroid_hz",
+    "energy_db",
+    "repetition_count",
+    "voiced_fraction"
+  ],
+  "labels": [
+    "play_context",
+    "separation_context",
+    "alert_context",
+    "food_context",
+    "resting_context",
+    "unknown"
+  ],
+  "abstention_threshold": 0.55,
+  "claim_scope": "species-specific context-associated hypothesis; not a translation or intent claim"
+}

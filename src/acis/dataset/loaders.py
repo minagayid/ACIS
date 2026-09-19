@@ -26,6 +26,10 @@ class TrainingExample:
         return self.recording.site_id
 
     @property
+    def species(self) -> str:
+        return self.recording.species
+
+    @property
     def label(self) -> str:
         if len(self.annotation.context_labels) != 1:
             raise ValueError(f"segment {self.annotation.segment_id} is multi-label")

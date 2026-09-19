@@ -80,3 +80,25 @@ class SchemaValidationTests(unittest.TestCase):
         base["consent_status"] = "invented"
         with self.assertRaises(ValidationError):
             Recording.from_dict(base)
+
+    def test_recording_accepts_non_sensitive_taxonomy_metadata(self):
+        base = {
+            "recording_id": "rec",
+            "animal_id": "animal-1",
+            "species": "tursiops_truncatus",
+            "file_uri": "data/raw/a.wav",
+            "captured_at": "2026-01-01T00:00:00Z",
+            "session_id": "session",
+            "site_id": "site",
+            "device_id": "device",
+            "location_class": "coastal",
+            "consent_status": "documented",
+            "population": "bay-a",
+            "region": "north",
+            "habitat": "nearshore",
+            "wild_or_domestic": "wild",
+            "social_group_id": "group-1",
+        }
+        recording = Recording.from_dict(base)
+        self.assertEqual(recording.population, "bay-a")
+        self.assertEqual(recording.social_group_id, "group-1")

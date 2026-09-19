@@ -19,6 +19,7 @@ from acis.evaluation.reports import render_report, write_report
 from acis.ingest.manifest import validate_dataset
 from acis.models.baseline import ContextBaseline
 from acis.models.inference import predict_with_evidence
+from acis.models.loader import create_model, load_model_artifact
 
 
 def _paths(parser: argparse.ArgumentParser) -> None:
@@ -53,17 +54,19 @@ def _artifact_metadata(config: ProjectConfig, recordings, annotations, training_
         "config_path": str(config_path),
         "training_segment_ids": [item.annotation.segment_id for item in training_examples],
         "training_animal_ids": sorted({item.animal_id for item in training_examples}),
+        "training_species": sorted({item.species for item in training_examples}),
+        "species_scope": list(config.species_scope),
     }
 
 
 def _load(args: argparse.Namespace):
     config = load_config(args.config)
-    if config.model != ContextBaseline.name:
+    if config.model not in {ContextBaseline.name, "species-routed-standardized-nearest-centroid"}:
         raise ValueError(f"unsupported configured model: {config.model}")
     recordings, annotations = validate_dataset(args.recordings, args.annotations)
-    mismatched_species = sorted({item.species for item in recordings if item.species != config.species})
+    mismatched_species = sorted({item.species for item in recordings if item.species not in config.species_scope})
     if mismatched_species:
-        raise ValueError(f"recordings contain species outside configured species {config.species}: {mismatched_species}")
+        raise ValueError(f"recordings contain species outside configured species scope {list(config.species_scope)}: {mismatched_species}")
     mismatched_labels = sorted({label for item in annotations for label in item.context_labels if label not in config.labels})
     if mismatched_labels:
         raise ValueError(f"annotations contain labels outside config: {mismatched_labels}")
@@ -87,7 +90,7 @@ def _metrics(model: ContextBaseline, examples, *, baseline_labels: list[str] | N
         if _missing_features(example):
             excluded["missing_acoustic_features"] += 1
             continue
-        result = predict_with_evidence(model, example.annotation, neighbors=None)
+        result = predict_with_evidence(model, example.annotation, species=example.species, neighbors=None)
         truth.append(example.label)
         predicted.append(result.predicted_label if result.predicted_label is not None else "abstained")
         probabilities.append(result.probabilities)
@@ -115,7 +118,7 @@ def command_validate(args: argparse.Namespace) -> int:
             if item.is_single_label and item.target_label != "unknown" and _missing_features(item)
         ),
     }
-    print(json.dumps({"valid": True, "config_species": config.species, "recordings": len(recordings), "annotations": len(annotations), "excluded_from_single_label_baseline": excluded}, indent=2))
+    print(json.dumps({"valid": True, "config_species": config.species, "species_scope": list(config.species_scope), "recordings": len(recordings), "annotations": len(annotations), "excluded_from_single_label_baseline": excluded}, indent=2))
     return 0
 
 
@@ -123,7 +126,7 @@ def command_train(args: argparse.Namespace) -> int:
     config, recordings, annotations, examples = _load(args)
     if _is_synthetic(args.recordings) and not args.allow_synthetic:
         raise SystemExit("refusing to train from the synthetic fixture without --allow-synthetic")
-    model = ContextBaseline(abstention_threshold=config.abstention_threshold).fit(examples, allow_excluded=args.allow_exclusions)
+    model = create_model(config.model, abstention_threshold=config.abstention_threshold).fit(examples, allow_excluded=args.allow_exclusions)
     model.artifact_metadata = _artifact_metadata(config, recordings, annotations, model.training_examples, args.config, "synthetic_fixture" if _is_synthetic(args.recordings) else "empirical")
     destination = Path(args.output)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -137,7 +140,7 @@ def command_evaluate(args: argparse.Namespace) -> int:
     if _is_synthetic(args.recordings) and not args.allow_synthetic:
         raise SystemExit("refusing to evaluate the synthetic fixture without --allow-synthetic")
     split = grouped_split(examples)
-    model = ContextBaseline(abstention_threshold=config.abstention_threshold).fit(split.train, allow_excluded=args.allow_exclusions)
+    model = create_model(config.model, abstention_threshold=config.abstention_threshold).fit(split.train, allow_excluded=args.allow_exclusions)
     metrics = {
         "validation": _metrics(model, split.validation, baseline_labels=[item.label for item in split.train]),
         "test": _metrics(model, split.test, baseline_labels=[item.label for item in split.train]),
@@ -183,12 +186,12 @@ def command_serve(args: argparse.Namespace) -> int:
         artifact_config = artifact.get("metadata", {}).get("config_fingerprint")
         if artifact_config and artifact_config != expected_config:
             raise ValueError("model artifact configuration does not match --config")
-        store.model = ContextBaseline.from_dict(artifact)
+        store.model = load_model_artifact(artifact)
         store.inference_mode = "artifact"
     else:
         if not args.allow_synthetic and _is_synthetic(args.recordings):
             raise SystemExit("refusing to serve the synthetic fixture without --allow-synthetic")
-        store.model = ContextBaseline(abstention_threshold=config.abstention_threshold).fit(examples, allow_excluded=args.allow_exclusions)
+        store.model = create_model(config.model, abstention_threshold=config.abstention_threshold).fit(examples, allow_excluded=args.allow_exclusions)
         store.inference_mode = "in_sample_demo"
     store.training_segment_ids = set(item.annotation.segment_id for item in store.model.training_examples)
     store.training_segment_ids.update(store.model.artifact_metadata.get("training_segment_ids", []))

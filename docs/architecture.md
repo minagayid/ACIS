@@ -16,9 +16,10 @@ annotation JSONL ───┘                                                   
 2. **Observable annotation:** `AnnotationSegment` stores intervals, labels, visible behavior, trigger notes, and quality flags.
 3. **Feature adapter:** deterministic acoustic summaries provide a stable interface for the fixture and a future audio backend.
 4. **Dataset join and split:** recording metadata and annotations are joined only after independent validation; partitions are grouped by animal.
-5. **Baseline inference:** a standardized nearest-centroid model produces an uncalibrated score distribution and can abstain.
-6. **Evidence retrieval:** nearest labeled examples are returned with provenance fields.
-7. **Local service:** the HTTP layer exposes contracts for annotation tools and later research interfaces.
+5. **Species routing:** the multispecies mode trains an independent standardized nearest-centroid model per species and filters evidence retrieval to the query species.
+6. **Baseline inference:** a standardized nearest-centroid model produces an uncalibrated score distribution and can abstain.
+7. **Evidence retrieval:** nearest labeled examples are returned with provenance fields.
+8. **Local service:** the HTTP layer exposes contracts for annotation tools and later research interfaces.
 
 ## Deliberate omissions
 
@@ -30,4 +31,5 @@ No database, vector store, foundation model, model-serving cluster, unrestricted
 - Add multi-label learning without changing the annotation schema.
 - Add calibrated classifiers and explicit OOD thresholds.
 - Add model/dataset version IDs to an experiment registry.
+- Add per-species calibration and cross-population/device holdouts before comparing species.
 - Add controlled playback only behind a separate welfare-reviewed protocol.

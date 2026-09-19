@@ -2,7 +2,7 @@
 
 ACIS Context Lab is a small, reproducible research scaffold for studying animal vocalizations in context.
 
-It is the first, deliberately narrow slice of the Animal Communication Intelligence System (ACIS) vision from the shared design conversation. The project starts with domestic dogs, observable context labels, transparent acoustic features, subject-disjoint evaluation, evidence retrieval, threshold-based uncertainty handling, and a human review loop.
+It is the first, deliberately narrow slice of the Animal Communication Intelligence System (ACIS) vision from the shared design conversation. The project starts with domestic dogs, observable context labels, transparent acoustic features, subject-disjoint evaluation, evidence retrieval, threshold-based uncertainty handling, and a human review loop. The same contracts can now route independent baselines for multiple species without pretending that their acoustic spaces are interchangeable.
 
 It does **not** translate animal language, infer private emotions, or generate animal signals. A model prediction is a hypothesis about an observed association. Establishing communicative function requires controlled experiments and independent replication.
 
@@ -17,6 +17,7 @@ It does **not** translate animal language, infer private emotions, or generate a
 - Nearest-example retrieval so predictions are inspectable.
 - Evaluation metrics for macro-F1, balanced accuracy, Brier score, and majority-class comparison.
 - A dependency-free JSON HTTP service and CLI.
+- Optional species-routed baselines with species/population/region/habitat metadata.
 - Data/model cards, annotation guidance, a protocol outline, and an adversarial decision log.
 
 ## Research question for the first vertical slice
@@ -116,6 +117,10 @@ The test suite uses only the Python standard library. Optional development tooli
 5. Add calibrated models and out-of-distribution monitoring after the data contract is stable.
 6. Design a controlled behavioral validation study before any functional claim.
 7. Treat dialects, sequence structure, synthetic signals, cross-species comparison, and generation as later research questions—not MVP capabilities.
+
+See [`docs/multispecies.md`](docs/multispecies.md) for the expansion workflow and
+[`configs/multispecies_baseline.json`](configs/multispecies_baseline.json) for
+the species-routed configuration.
 
 ## License
 

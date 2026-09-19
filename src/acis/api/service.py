@@ -56,6 +56,14 @@ def _public_recording(recording: Recording) -> dict[str, Any]:
     return {
         "recording_id": recording.recording_id,
         "species": recording.species,
+        "subspecies": recording.subspecies,
+        "population": recording.population,
+        "region": recording.region,
+        "habitat": recording.habitat,
+        "wild_or_domestic": recording.wild_or_domestic,
+        "social_group_id": recording.social_group_id,
+        "age_class": recording.age_class,
+        "sex": recording.sex,
         "location_class": recording.location_class,
         "duration_ms": recording.duration_ms,
         "sample_rate_hz": recording.sample_rate_hz,
@@ -197,6 +205,7 @@ def create_server(
                         query_recording_device_id=recording.device_id if recording else None,
                         query_recording_id=recording.recording_id,
                         query_session_id=recording.session_id,
+                        species=recording.species,
                         neighbors=store.examples,
                         training_segment_ids=store.training_segment_ids,
                     )

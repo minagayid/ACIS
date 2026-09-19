@@ -6,11 +6,11 @@ The committed example corpus is synthetic metadata with hand-authored acoustic s
 
 ## Intended future data
 
-Consented, species-specific recordings with synchronized audio/video where feasible, session metadata, observable behavior, trigger metadata, source identity confidence, and negative/background windows.
+Consented, species-specific recordings with synchronized audio/video where feasible, session metadata, observable behavior, trigger metadata, source identity confidence, population/region/habitat metadata, and negative/background windows.
 
 ## Required provenance
 
-- animal, session, social group, site, device, and observer identifiers;
+- species, subspecies, population, region, habitat, animal, session, social group, site, device, and observer identifiers;
 - capture timestamps and synchronized sensor clocks;
 - file hash, transformation history, and preprocessing version;
 - license, consent, permits, and welfare review status;

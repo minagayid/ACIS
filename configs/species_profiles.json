@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "profiles": [
+    {
+      "species": "canis_lupus_familiaris",
+      "common_name": "domestic dog",
+      "modalities": ["acoustic", "visual", "behavioral", "environmental", "social"],
+      "sensor_package": ["microphone", "camera", "environmental_sensors"],
+      "annotation_priority": ["receiver", "recorded_trigger", "response_observed", "social_group_id"]
+    },
+    {
+      "species": "taeniopygia_guttata",
+      "common_name": "zebra finch",
+      "modalities": ["acoustic", "visual", "behavioral", "environmental", "social"],
+      "sensor_package": ["microphone", "high_speed_camera", "environmental_sensors"],
+      "annotation_priority": ["receiver", "sequence_position", "response_observed", "social_group_id"]
+    },
+    {
+      "species": "myotis_lucifugus",
+      "common_name": "little brown bat",
+      "modalities": ["acoustic", "behavioral", "environmental", "social"],
+      "sensor_package": ["ultrasonic_microphone", "camera", "environmental_sensors"],
+      "annotation_priority": ["receiver", "flight_context", "response_observed", "social_group_id"]
+    },
+    {
+      "species": "tursiops_truncatus",
+      "common_name": "common bottlenose dolphin",
+      "modalities": ["acoustic", "visual", "behavioral", "environmental", "social"],
+      "sensor_package": ["hydrophone", "underwater_camera", "environmental_sensors"],
+      "annotation_priority": ["receiver", "group_context", "response_observed", "social_group_id"]
+    }
+  ]
+}

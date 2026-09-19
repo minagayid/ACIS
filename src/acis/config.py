@@ -16,6 +16,7 @@ from acis.schemas.annotation import ALLOWED_CONTEXTS
 class ProjectConfig:
     schema_version: str
     species: str
+    species_scope: tuple[str, ...]
     model: str
     features: tuple[str, ...]
     labels: tuple[str, ...]
@@ -45,9 +46,18 @@ def load_config(path: str | Path) -> ProjectConfig:
         raise ValueError("config abstention_threshold must be numeric") from exc
     if not math.isfinite(threshold) or not 0 < threshold <= 1:
         raise ValueError("config abstention_threshold must be in (0, 1]")
+    raw_species = data["species"]
+    configured_species = str(raw_species) if isinstance(raw_species, str) else "multi_species"
+    raw_scope = data.get("species_scope", raw_species if isinstance(raw_species, list) else [raw_species])
+    if not isinstance(raw_scope, list) or not raw_scope or any(not isinstance(item, str) or not item.strip() for item in raw_scope):
+        raise ValueError("config species_scope must be a non-empty list of species identifiers")
+    species_scope = tuple(dict.fromkeys(item.strip() for item in raw_scope))
+    if configured_species != "multi_species" and configured_species not in species_scope:
+        raise ValueError("config species must be included in species_scope")
     return ProjectConfig(
         schema_version=str(data["schema_version"]),
-        species=str(data["species"]),
+        species=configured_species,
+        species_scope=species_scope,
         model=str(data["model"]),
         features=features,
         labels=labels,

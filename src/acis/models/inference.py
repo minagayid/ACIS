@@ -9,6 +9,12 @@ from acis.schemas.annotation import AnnotationSegment
 from acis.schemas.prediction import Prediction
 
 
+def _selected_model(model, species: str | None):
+    """Return the species-specific model while keeping the legacy API intact."""
+    selector = getattr(model, "for_species", None)
+    return selector(species) if selector is not None else model
+
+
 def predict_with_evidence(
     model: ContextBaseline,
     segment: AnnotationSegment,
@@ -18,15 +24,17 @@ def predict_with_evidence(
     query_recording_device_id: str | None = None,
     query_recording_id: str | None = None,
     query_session_id: str | None = None,
+    species: str | None = None,
     neighbors: list[TrainingExample] | None = None,
     training_segment_ids: set[str] | None = None,
     top_k: int = 3,
 ) -> Prediction:
-    result = model.predict_distribution(segment)
+    selected = _selected_model(model, species)
+    result = selected.predict_distribution(segment)
     ood_flags: list[str] = []
     if result.min_distance > 4.0:
         ood_flags.append("far_from_training_centroids")
-    abstained = result.confidence < model.abstention_threshold or bool(ood_flags)
+    abstained = result.confidence < selected.abstention_threshold or bool(ood_flags)
     predicted_label = None if abstained else result.label
     abstention_reason = None
     if abstained:
@@ -34,7 +42,7 @@ def predict_with_evidence(
     evidence = {
         "same_animal_examples": 0,
         "same_device_examples": 0,
-        "training_examples": len(model.training_examples) or len(model.artifact_metadata.get("training_segment_ids", [])),
+        "training_examples": len(selected.training_examples) or len(selected.artifact_metadata.get("training_segment_ids", [])),
         "min_centroid_distance": round(result.min_distance, 4),
     }
     retrieved = []
@@ -46,8 +54,9 @@ def predict_with_evidence(
             exclude_animal_id=query_recording_animal_id,
             exclude_recording_id=query_recording_id,
             exclude_session_id=query_session_id,
-            means=model.means,
-            stds=model.stds,
+            species=species,
+            means=selected.means,
+            stds=selected.stds,
         )
         evidence["same_animal_examples"] = sum(
             1 for item in retrieved if query_recording_animal_id and item.animal_id == query_recording_animal_id
@@ -56,7 +65,7 @@ def predict_with_evidence(
             1 for item in retrieved if query_recording_device_id and item.device_id == query_recording_device_id
         )
         known_training_ids = training_segment_ids if training_segment_ids is not None else {
-            item.annotation.segment_id for item in model.training_examples
+            item.annotation.segment_id for item in selected.training_examples
         }
         evidence["query_in_training_set"] = segment.segment_id in known_training_ids
         evidence["same_animal_retrieval_excluded"] = query_recording_animal_id is not None

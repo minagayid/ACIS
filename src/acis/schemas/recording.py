@@ -24,6 +24,17 @@ class Recording:
     location_class: str
     consent_status: str
     collector_id: str | None = None
+    # Optional taxonomy and social metadata let the same contract represent
+    # domestic, wild, terrestrial, marine, and invertebrate studies without
+    # requiring exact locations or species-specific columns.
+    subspecies: str | None = None
+    population: str | None = None
+    region: str | None = None
+    habitat: str | None = None
+    wild_or_domestic: str | None = None
+    social_group_id: str | None = None
+    age_class: str | None = None
+    sex: str | None = None
     duration_ms: int | None = None
     sample_rate_hz: int | None = None
     channels: int | None = None
@@ -33,7 +44,8 @@ class Recording:
         allowed = {
             "recording_id", "animal_id", "species", "file_uri", "captured_at", "session_id",
             "site_id", "device_id", "location_class", "collector_id", "duration_ms",
-            "sample_rate_hz", "channels", "consent_status",
+            "sample_rate_hz", "channels", "consent_status", "subspecies", "population",
+            "region", "habitat", "wild_or_domestic", "social_group_id", "age_class", "sex",
         }
         copy_unknown_keys(data, allowed)
         duration = require_int(data, "duration_ms", minimum=1) if data.get("duration_ms") is not None else None
@@ -57,6 +69,14 @@ class Recording:
             sample_rate_hz=sample_rate,
             channels=channels,
             consent_status=consent_status,
+            subspecies=optional_string(data, "subspecies"),
+            population=optional_string(data, "population"),
+            region=optional_string(data, "region"),
+            habitat=optional_string(data, "habitat"),
+            wild_or_domestic=optional_string(data, "wild_or_domestic"),
+            social_group_id=optional_string(data, "social_group_id"),
+            age_class=optional_string(data, "age_class"),
+            sex=optional_string(data, "sex"),
         )
 
     def to_dict(self) -> dict[str, Any]:
